@@ -14,6 +14,14 @@ python main.py
 
 Abre `http://127.0.0.1:8000`. Presiona `Ctrl+C` para detener el servidor.
 
+Para guardar citas en Supabase, copia `.env.example` a `.env` y configura
+`SUPABASE_URL` y `SUPABASE_SECRET_KEY` con las credenciales del proyecto.
+El servidor carga `.env` al iniciar; si faltan ambas variables, usa SQLite
+local. Nunca publiques `.env` ni expongas la clave secreta en el navegador.
+Antes de usar Supabase, aplica la migración
+`supabase/migrations/202610060001_create_appointments.sql` desde el SQL Editor
+del proyecto.
+
 ## API
 
 `GET /api/analysis` recibe `service`, `appointments`, `clinicians`, `minutes` y `rooms`. Retorna la capacidad total, ocupación estimada, citas sin capacidad y el refuerzo sugerido.

@@ -11,6 +11,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Protocol
 from uuid import uuid4
 
 
@@ -38,6 +39,16 @@ class Appointment:
     starts_at: str
     ends_at: str
     status: str
+
+
+class AppointmentStore(Protocol):
+    def create(self, request: BookingRequest) -> Appointment: ...
+
+    def list_for_date(self, date: str) -> list[Appointment]: ...
+
+    def cancel(self, appointment_id: str) -> Appointment: ...
+
+    def reschedule(self, appointment_id: str, starts_at: str) -> Appointment: ...
 
 
 class AppointmentRepository:

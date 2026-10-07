@@ -11,10 +11,14 @@ from urllib.parse import parse_qs, urlparse
 from api.analysis import build_capacity_payload
 from api.appointments import (cancel_appointment_payload, create_appointment_payload,
                               list_appointments_payload, reschedule_appointment_payload)
-from climastock.booking import AppointmentConflictError, AppointmentRepository
+from climastock.booking import AppointmentConflictError, AppointmentStore
+from climastock.repository_factory import load_environment_file, repository_from_environment
+from climastock.supabase_repository import SupabaseUnavailableError
 
 
 class ClinicaFlowHandler(BaseHTTPRequestHandler):
+    repository: AppointmentStore | None = None
+
     def do_GET(self) -> None:
         route = urlparse(self.path)
         if route.path == "/":
@@ -34,9 +38,11 @@ class ClinicaFlowHandler(BaseHTTPRequestHandler):
             return
         try:
             payload = self._read_json()
-            self._send_json(HTTPStatus.CREATED, create_appointment_payload(payload, AppointmentRepository()))
+            self._send_json(HTTPStatus.CREATED, create_appointment_payload(payload, self._repository()))
         except AppointmentConflictError as error:
             self._send_json(HTTPStatus.CONFLICT, {"success": False, "error": str(error)})
+        except SupabaseUnavailableError as error:
+            self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"success": False, "error": str(error)})
         except (ValueError, json.JSONDecodeError) as error:
             self._send_json(HTTPStatus.BAD_REQUEST, {"success": False, "error": str(error)})
 
@@ -47,7 +53,9 @@ class ClinicaFlowHandler(BaseHTTPRequestHandler):
             return
         try:
             appointment_id = parse_qs(route.query).get("id", [""])[0]
-            self._send_json(HTTPStatus.OK, cancel_appointment_payload(appointment_id, AppointmentRepository()))
+            self._send_json(HTTPStatus.OK, cancel_appointment_payload(appointment_id, self._repository()))
+        except SupabaseUnavailableError as error:
+            self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"success": False, "error": str(error)})
         except ValueError as error:
             self._send_json(HTTPStatus.BAD_REQUEST, {"success": False, "error": str(error)})
 
@@ -59,18 +67,27 @@ class ClinicaFlowHandler(BaseHTTPRequestHandler):
             payload = self._read_json()
             appointment_id = str(payload.get("id", ""))
             starts_at = str(payload.get("starts_at", ""))
-            self._send_json(HTTPStatus.OK, reschedule_appointment_payload(appointment_id, starts_at, AppointmentRepository()))
+            self._send_json(HTTPStatus.OK, reschedule_appointment_payload(appointment_id, starts_at, self._repository()))
         except AppointmentConflictError as error:
             self._send_json(HTTPStatus.CONFLICT, {"success": False, "error": str(error)})
+        except SupabaseUnavailableError as error:
+            self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"success": False, "error": str(error)})
         except (ValueError, json.JSONDecodeError) as error:
             self._send_json(HTTPStatus.BAD_REQUEST, {"success": False, "error": str(error)})
 
     def _handle_appointments(self, route) -> None:
         try:
             date = parse_qs(route.query).get("date", [""])[0]
-            self._send_json(HTTPStatus.OK, list_appointments_payload(date, AppointmentRepository()))
+            self._send_json(HTTPStatus.OK, list_appointments_payload(date, self._repository()))
+        except SupabaseUnavailableError as error:
+            self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"success": False, "error": str(error)})
         except ValueError as error:
             self._send_json(HTTPStatus.BAD_REQUEST, {"success": False, "error": str(error)})
+
+    def _repository(self) -> AppointmentStore:
+        if self.repository is None:
+            raise RuntimeError("El repositorio de citas no está configurado.")
+        return self.repository
 
     def _read_json(self) -> dict:
         size = int(self.headers.get("Content-Length", "0"))
@@ -103,6 +120,8 @@ class ClinicaFlowHandler(BaseHTTPRequestHandler):
 
 
 def run_server(port: int = 8000) -> None:
+    load_environment_file()
+    ClinicaFlowHandler.repository = repository_from_environment()
     server = ThreadingHTTPServer(("127.0.0.1", port), ClinicaFlowHandler)
     print(f"ClinicaFlow disponible en http://127.0.0.1:{port}")
     print("Presiona Ctrl+C para detener el servidor.")
