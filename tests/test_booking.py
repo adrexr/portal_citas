@@ -79,5 +79,23 @@ class AppointmentApiContractTests(unittest.TestCase):
         self.assertEqual([item["patient_name"] for item in payload["data"]], ["Luis Perez", "Ana Gomez"])
 
 
+class WhatsAppBookingFlowTests(unittest.TestCase):
+    def test_confirmed_booking_offers_a_whatsapp_chat_with_reception(self) -> None:
+        dashboard = Path("index.html").read_text(encoding="utf-8")
+
+        self.assertIn("https://wa.me/", dashboard)
+        self.assertIn("13473689226", dashboard)
+        self.assertNotIn("573136465700", dashboard)
+        self.assertIn("Abrir WhatsApp", dashboard)
+        self.assertIn('target="_blank"', dashboard)
+
+    def test_booking_form_is_retained_before_the_async_request(self) -> None:
+        dashboard = Path("index.html").read_text(encoding="utf-8")
+
+        self.assertIn("const form = event.currentTarget;", dashboard)
+        self.assertIn("form.reset();", dashboard)
+        self.assertNotIn("event.currentTarget.reset();", dashboard)
+
+
 if __name__ == "__main__":
     unittest.main()
