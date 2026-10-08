@@ -15,6 +15,12 @@ class DashboardExperienceTests(unittest.TestCase):
         self.assertIn("method: 'PATCH'", self.dashboard)
         self.assertIn('aria-modal="true"', self.dashboard)
 
+    def test_cancellation_confirmation_has_custom_alert_title(self) -> None:
+        self.assertIn('id="cancel-dialog"', self.dashboard)
+        self.assertIn('<h2 id="cancel-title">Alerta</h2>', self.dashboard)
+        self.assertIn("cancelForm.addEventListener('submit'", self.dashboard)
+        self.assertNotIn("confirm('¿Cancelar esta cita?", self.dashboard)
+
     def test_supports_theme_preference_and_reduced_motion(self) -> None:
         self.assertIn('id="theme-toggle"', self.dashboard)
         self.assertIn("localStorage.setItem('clinicaflow-theme'", self.dashboard)
