@@ -35,7 +35,7 @@ def load_environment_file() -> None:
             raise ValueError(f"Configuración inválida en .env, línea {line_number}.")
         name, value = stripped.split("=", 1)
         name = name.strip()
-        if name not in {"SUPABASE_URL", "SUPABASE_SECRET_KEY"}:
+        if name not in {"SUPABASE_URL", "SUPABASE_SECRET_KEY", "WHATSAPP_VERIFY_TOKEN", "WHATSAPP_APP_SECRET"}:
             continue
         value = value.strip()
         if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:

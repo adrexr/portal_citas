@@ -41,3 +41,7 @@ api/analysis.py         Función compatible con Vercel
 index.html              Tablero operativo
 tests/test_climastock.py Pruebas de reglas y contrato API
 ```
+
+### Flujo del proyecto
+
+![Diagrama del flujo de diseño y arquitectura de ClinicaFlow](docs/flujo-diseno.svg)

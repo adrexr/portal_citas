@@ -11,6 +11,7 @@ from urllib.parse import parse_qs, urlparse
 from api.analysis import build_capacity_payload
 from api.appointments import (cancel_appointment_payload, create_appointment_payload,
                               list_appointments_payload, reschedule_appointment_payload)
+from api.whatsapp_webhook import handler as WhatsAppWebhookHandler
 from climastock.booking import AppointmentConflictError, AppointmentStore
 from climastock.repository_factory import load_environment_file, repository_from_environment
 from climastock.supabase_repository import SupabaseUnavailableError
@@ -30,10 +31,17 @@ class ClinicaFlowHandler(BaseHTTPRequestHandler):
         if route.path == "/api/appointments":
             self._handle_appointments(route)
             return
+        if route.path == "/api/whatsapp_webhook":
+            WhatsAppWebhookHandler.do_GET(self)
+            return
         self._send(HTTPStatus.NOT_FOUND, "text/plain; charset=utf-8", "Ruta no encontrada")
 
     def do_POST(self) -> None:
-        if urlparse(self.path).path != "/api/appointments":
+        route_path = urlparse(self.path).path
+        if route_path == "/api/whatsapp_webhook":
+            WhatsAppWebhookHandler.do_POST(self)
+            return
+        if route_path != "/api/appointments":
             self._send(HTTPStatus.NOT_FOUND, "text/plain; charset=utf-8", "Ruta no encontrada")
             return
         try:

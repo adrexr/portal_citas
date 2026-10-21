@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1120" role="img" aria-labelledby="title description">
+  <title id="title">Flujo de diseño y arquitectura de ClinicaFlow</title>
+  <desc id="description">Diagrama de los flujos de análisis de capacidad clínica y gestión de citas, desde el tablero web hasta el motor de reglas y los repositorios SQLite o Supabase.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5f7ff"/>
+      <stop offset="1" stop-color="#e8efff"/>
+    </linearGradient>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#17244a"/>
+      <stop offset="1" stop-color="#303eb8"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#26366f" flood-opacity=".12"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2 2 10 6 2 10" fill="none" stroke="#7180b7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrowTeal" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+      <path d="M2 2 10 6 2 10" fill="none" stroke="#13a999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #17213f; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 2px; }
+      .title { font-size: 38px; font-weight: 800; fill: #fff; letter-spacing: -.7px; }
+      .subtitle { font-size: 17px; fill: #dce4ff; }
+      .section { font-size: 15px; font-weight: 800; letter-spacing: 1.6px; fill: #4654d8; }
+      .card { fill: #fff; stroke: #dfe4f2; stroke-width: 1.5; }
+      .card-title { font-size: 19px; font-weight: 800; }
+      .body { font-size: 15px; fill: #596581; }
+      .small { font-size: 13px; fill: #66708a; }
+      .pill-text { font-size: 12px; font-weight: 800; letter-spacing: .5px; }
+      .connector { fill: none; stroke: #7180b7; stroke-width: 3; marker-end: url(#arrow); }
+      .connector-teal { fill: none; stroke: #13a999; stroke-width: 3; marker-end: url(#arrowTeal); }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1120" fill="url(#background)"/>
+  <circle cx="1480" cy="100" r="150" fill="#fff" opacity=".25"/>
+  <circle cx="90" cy="1010" r="185" fill="#a9eee4" opacity=".18"/>
+
+  <rect x="56" y="42" width="1488" height="126" rx="24" fill="url(#header)"/>
+  <text x="94" y="83" class="eyebrow" fill="#8ee7dc">CLINICAFLOW · VISIÓN DEL SISTEMA</text>
+  <text x="94" y="127" class="title">Flujo de diseño del proyecto</text>
+  <text x="960" y="91" class="subtitle">De la operación diaria a un plan claro y explicable</text>
+  <text x="960" y="121" class="subtitle">Tablero web · API Python · reglas · agenda persistente</text>
+
+  <text x="80" y="218" class="section">01  /  PLANEACIÓN DE CAPACIDAD POR TURNO</text>
+  <text x="80" y="245" class="small">Las entradas operativas se procesan sin datos de pacientes ni decisiones clínicas.</text>
+
+  <g filter="url(#shadow)">
+    <rect class="card" x="80" y="280" width="300" height="240" rx="20"/>
+    <rect x="80" y="280" width="300" height="8" rx="4" fill="#4654d8"/>
+    <circle cx="115" cy="326" r="17" fill="#eef0ff"/>
+    <text x="109" y="332" font-size="16" font-weight="800" fill="#4654d8">1</text>
+    <text x="145" y="333" class="card-title">Tablero operativo</text>
+    <text x="108" y="375" class="body">El equipo define el turno:</text>
+    <text x="108" y="405" class="body">• Servicio y citas programadas</text>
+    <text x="108" y="433" class="body">• Personal disponible</text>
+    <text x="108" y="461" class="body">• Minutos por cita y consultorios</text>
+    <rect x="108" y="482" width="162" height="24" rx="12" fill="#eef0ff"/>
+    <text x="121" y="499" class="pill-text" fill="#4654d8">index.html</text>
+
+    <rect class="card" x="460" y="280" width="300" height="240" rx="20"/>
+    <rect x="460" y="280" width="300" height="8" rx="4" fill="#6573df"/>
+    <circle cx="495" cy="326" r="17" fill="#eef0ff"/>
+    <text x="489" y="332" font-size="16" font-weight="800" fill="#4654d8">2</text>
+    <text x="525" y="333" class="card-title">API de análisis</text>
+    <text x="488" y="375" class="body">Recibe parámetros por HTTP</text>
+    <text x="488" y="405" class="body">GET /api/analysis</text>
+    <text x="488" y="435" class="body">Valida campos y tipos de entrada</text>
+    <text x="488" y="465" class="small">web.py · api/analysis.py</text>
+    <rect x="488" y="482" width="166" height="24" rx="12" fill="#eef0ff"/>
+    <text x="501" y="499" class="pill-text" fill="#4654d8">respuesta JSON</text>
+
+    <rect class="card" x="840" y="280" width="300" height="240" rx="20"/>
+    <rect x="840" y="280" width="300" height="8" rx="4" fill="#13b8a6"/>
+    <circle cx="875" cy="326" r="17" fill="#ddfaf5"/>
+    <text x="869" y="332" font-size="16" font-weight="800" fill="#087e75">3</text>
+    <text x="905" y="333" class="card-title">Motor de capacidad</text>
+    <text x="868" y="375" class="body">Calcula para un turno de 8 h:</text>
+    <text x="868" y="405" class="body">• Capacidad por personal y salas</text>
+    <text x="868" y="435" class="body">• Ocupación y citas excedentes</text>
+    <text x="868" y="465" class="body">• Refuerzo adicional sugerido</text>
+    <rect x="868" y="482" width="183" height="24" rx="12" fill="#ddfaf5"/>
+    <text x="881" y="499" class="pill-text" fill="#087e75">analyzer.py</text>
+
+    <rect class="card" x="1220" y="280" width="300" height="240" rx="20"/>
+    <rect x="1220" y="280" width="300" height="8" rx="4" fill="#f0aa4b"/>
+    <circle cx="1255" cy="326" r="17" fill="#fff4df"/>
+    <text x="1249" y="332" font-size="16" font-weight="800" fill="#9a5d00">4</text>
+    <text x="1285" y="333" class="card-title">Plan explicable</text>
+    <text x="1248" y="375" class="body">Clasifica el estado operativo</text>
+    <text x="1248" y="405" class="body">según ocupación y excedentes.</text>
+    <text x="1248" y="445" class="body">Devuelve métricas y motivo</text>
+    <text x="1248" y="475" class="body">para actualizar el tablero.</text>
+  </g>
+
+  <path class="connector" d="M390 400 H445"/>
+  <path class="connector" d="M770 400 H825"/>
+  <path class="connector" d="M1150 400 H1205"/>
+
+  <path d="M1370 520 V563 H800" fill="none" stroke="#7180b7" stroke-width="2.5"/>
+  <path d="M800 563 H330 V585" class="connector"/>
+  <path d="M800 563 V585" class="connector"/>
+  <path d="M800 563 H1270 V585" class="connector"/>
+
+  <g filter="url(#shadow)">
+    <rect x="160" y="595" width="340" height="76" rx="18" fill="#e1f7ef" stroke="#b4ead9"/>
+    <circle cx="196" cy="633" r="12" fill="#1da883"/>
+    <text x="220" y="628" class="card-title" fill="#136c59">ESTABLE</text>
+    <text x="220" y="651" class="small">Hay margen operativo en el turno.</text>
+
+    <rect x="630" y="595" width="340" height="76" rx="18" fill="#fff4df" stroke="#f3d69d"/>
+    <circle cx="666" cy="633" r="12" fill="#e7a331"/>
+    <text x="690" y="628" class="card-title" fill="#8c5a08">ATENCIÓN</text>
+    <text x="690" y="651" class="small">El margen es reducido; revisar disponibilidad.</text>
+
+    <rect x="1100" y="595" width="340" height="76" rx="18" fill="#fff0f2" stroke="#f1c5cc"/>
+    <circle cx="1136" cy="633" r="12" fill="#c94258"/>
+    <text x="1160" y="628" class="card-title" fill="#a53246">CRÍTICA</text>
+    <text x="1160" y="651" class="small">Supera capacidad; evaluar refuerzo o redistribución.</text>
+  </g>
+
+  <text x="80" y="735" class="section">02  /  GESTIÓN DE CITAS</text>
+  <text x="80" y="762" class="small">Crear, consultar, reprogramar y cancelar citas; la persistencia se configura en el servidor.</text>
+
+  <g filter="url(#shadow)">
+    <rect class="card" x="80" y="800" width="320" height="188" rx="20"/>
+    <rect x="80" y="800" width="320" height="8" rx="4" fill="#4654d8"/>
+    <text x="108" y="850" class="card-title">Interfaz de agenda</text>
+    <text x="108" y="886" class="body">Formulario y lista de citas</text>
+    <text x="108" y="915" class="body">Crear · consultar · reprogramar</text>
+    <text x="108" y="944" class="body">Cancelar y actualizar cupos</text>
+
+    <rect class="card" x="500" y="800" width="320" height="188" rx="20"/>
+    <rect x="500" y="800" width="320" height="8" rx="4" fill="#6573df"/>
+    <text x="528" y="850" class="card-title">API de citas</text>
+    <text x="528" y="886" class="body">GET · POST · PATCH · DELETE</text>
+    <text x="528" y="915" class="body">Valida y coordina operaciones</text>
+    <text x="528" y="944" class="small">web.py · api/appointments.py</text>
+
+    <rect class="card" x="920" y="800" width="280" height="188" rx="20"/>
+    <rect x="920" y="800" width="280" height="8" rx="4" fill="#13b8a6"/>
+    <text x="948" y="850" class="card-title">Repositorio</text>
+    <text x="948" y="886" class="body">Seleccionado al iniciar</text>
+    <text x="948" y="915" class="body">según configuración del entorno</text>
+    <text x="948" y="944" class="small">repository_factory.py</text>
+
+    <rect class="card" x="1300" y="800" width="220" height="188" rx="20"/>
+    <rect x="1300" y="800" width="220" height="8" rx="4" fill="#f0aa4b"/>
+    <text x="1328" y="850" class="card-title">Almacenamiento</text>
+    <text x="1328" y="891" class="body">SQLite local</text>
+    <text x="1328" y="921" class="body">o Supabase</text>
+    <text x="1328" y="951" class="small">según configuración</text>
+  </g>
+
+  <path class="connector-teal" d="M410 894 H485"/>
+  <path class="connector-teal" d="M830 894 H905"/>
+  <path class="connector-teal" d="M1210 894 H1285"/>
+  <path d="M1410 1001 V1033 H240 V1001" fill="none" stroke="#13a999" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowTeal)"/>
+  <rect x="665" y="1017" width="320" height="28" rx="14" fill="#e0f8f4"/>
+  <text x="685" y="1036" class="pill-text" fill="#087e75">respuesta → agenda actualizada</text>
+
+  <rect x="80" y="1064" width="1440" height="1" fill="#d6deef"/>
+  <text x="80" y="1092" class="small">Alcance: coordinación de capacidad y agenda. No diagnostica, prioriza ni evalúa personas.</text>
+  <text x="1270" y="1092" class="small">ClinicaFlow · arquitectura funcional</text>
+</svg>
