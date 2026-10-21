@@ -30,13 +30,11 @@ class SupabaseAdminRepository:
         rows = self._request("GET", "whatsapp_messages", f"?{urlencode(filters)}")
         return _rows(rows)
 
-    def list_appointments(self, date: str) -> list[dict]:
-        filters = [
-            ("select", "id,patient_name,service,professional,starts_at,status"),
-            ("starts_at", f"gte.{date}T00:00"),
-            ("starts_at", f"lt.{date}T23:59:59"),
-            ("order", "starts_at.asc"),
-        ]
+    def list_appointments(self, date: str = "") -> list[dict]:
+        filters = [("select", "id,patient_name,service,professional,starts_at,status")]
+        if date:
+            filters.extend((("starts_at", f"gte.{date}T00:00"), ("starts_at", f"lt.{date}T23:59:59")))
+        filters.extend((("order", "starts_at.desc"), ("limit", "100")))
         return _rows(self._request("GET", "appointments", f"?{urlencode(filters)}"))
 
     def update_message_status(self, message_id: str, status: str) -> dict:

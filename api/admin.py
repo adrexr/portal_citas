@@ -66,8 +66,9 @@ def handle_get(request) -> None:
                 validate_message_status(status)
             payload = repository.list_messages(status)
         elif resource == "appointments":
-            selected_date = query.get("date", [date.today().isoformat()])[0]
-            date.fromisoformat(selected_date)
+            selected_date = query.get("date", [""])[0]
+            if selected_date:
+                date.fromisoformat(selected_date)
             payload = repository.list_appointments(selected_date)
         else:
             raise ValueError("Recurso no válido.")

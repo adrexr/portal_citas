@@ -23,6 +23,18 @@ class AdminAccessTests(unittest.TestCase):
 
         self.assertIn("http://127.0.0.1:8000/admin.html", dashboard)
 
+    def test_dashboard_keeps_the_login_visible_after_an_invalid_token(self) -> None:
+        dashboard = Path("admin.html").read_text(encoding="utf-8")
+
+        self.assertIn("await loadMessages(true)", dashboard)
+        self.assertIn("if (raiseOnFailure) throw error", dashboard)
+
+    def test_dashboard_can_request_all_appointments(self) -> None:
+        dashboard = Path("admin.html").read_text(encoding="utf-8")
+
+        self.assertIn('id="all-appointments"', dashboard)
+        self.assertIn("loadAppointments(true)", dashboard)
+
     def test_local_server_adapter_returns_unauthorized_instead_of_crashing(self) -> None:
         class FakeRequest:
             headers = {}
