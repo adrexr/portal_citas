@@ -1,10 +1,13 @@
 """Booking rules and API contract for the ClinicaFlow appointments portal."""
 
+import io
 import unittest
 from pathlib import Path
 from uuid import uuid4
+from unittest.mock import patch
 
-from api.appointments import create_appointment_payload, list_appointments_payload
+from api.appointments import (create_appointment_payload, handler as AppointmentsHandler,
+                              list_appointments_payload)
 from climastock.booking import AppointmentConflictError, AppointmentRepository, BookingRequest
 
 
@@ -77,6 +80,40 @@ class AppointmentApiContractTests(unittest.TestCase):
         self.repository.create(_request(patient_name="Luis Perez", starts_at="2026-10-06T09:00"))
         payload = list_appointments_payload("2026-10-06", self.repository)
         self.assertEqual([item["patient_name"] for item in payload["data"]], ["Luis Perez", "Ana Gomez"])
+
+    def test_vercel_post_handler_creates_an_appointment(self) -> None:
+        body = (
+            b'{"patient_name":"Ana Gomez","contact":"300 000 0000",'
+            b'"service":"Medicina general","professional":"Dra. Ruiz",'
+            b'"starts_at":"2026-10-06T09:00","duration_minutes":30}'
+        )
+        request = type("Request", (), {
+            "headers": {"Content-Length": str(len(body))},
+            "rfile": io.BytesIO(body),
+            "response": None,
+            "_send_json": lambda self, status, payload: setattr(self, "response", (status, payload)),
+        })()
+
+        with patch("api.appointments._repository_from_environment", return_value=self.repository):
+            AppointmentsHandler.do_POST(request)
+
+        self.assertEqual(request.response[0], 201)
+        self.assertEqual(request.response[1]["data"]["status"], "confirmada")
+
+    def test_vercel_post_handler_reports_missing_supabase_configuration(self) -> None:
+        body = b'{"patient_name":"Ana"}'
+        request = type("Request", (), {
+            "headers": {"Content-Length": str(len(body))},
+            "rfile": io.BytesIO(body),
+            "response": None,
+            "_send_json": lambda self, status, payload: setattr(self, "response", (status, payload)),
+        })()
+
+        with patch("api.appointments._repository_from_environment", side_effect=RuntimeError):
+            AppointmentsHandler.do_POST(request)
+
+        self.assertEqual(request.response[0], 503)
+        self.assertIn("Supabase", request.response[1]["error"])
 
 
 class WhatsAppBookingFlowTests(unittest.TestCase):
