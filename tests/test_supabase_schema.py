@@ -23,6 +23,12 @@ class SupabaseSchemaTests(unittest.TestCase):
         self.assertIn("revoke all on table public.whatsapp_messages from anon, authenticated", schema)
         self.assertIn("grant all on table public.whatsapp_messages to service_role", schema)
 
+    def test_message_workflow_adds_only_known_statuses(self) -> None:
+        schema = Path("supabase/migrations/202610210002_add_whatsapp_message_status.sql").read_text(encoding="utf-8")
+
+        self.assertIn("add column status text not null default 'nuevo'", schema)
+        self.assertIn("check (status in ('nuevo', 'respondido', 'cita_creada'))", schema)
+
 
 if __name__ == "__main__":
     unittest.main()

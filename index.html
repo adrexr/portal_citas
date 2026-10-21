@@ -770,6 +770,48 @@
       text-align: center
     }
 
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 28px 0
+    }
+
+    details {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--surface)
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 800
+    }
+
+    details p {
+      margin: 10px 0 0;
+      color: var(--muted)
+    }
+
+    .whatsapp-float {
+      position: fixed;
+      z-index: 10;
+      right: 20px;
+      bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: #128c7e;
+      color: #fff;
+      box-shadow: 0 14px 32px rgba(18, 140, 126, .3);
+      font-weight: 800;
+      text-decoration: none
+    }
+
     @keyframes rise {
       from {
         opacity: 0;
@@ -824,6 +866,10 @@
       .feature-grid,
       .steps-grid,
       .team-grid {
+        grid-template-columns: 1fr
+      }
+
+      .faq-grid {
         grid-template-columns: 1fr
       }
 
@@ -1099,9 +1145,22 @@
       </div>
       <a class="primary cta-link" href="#booking">Modernizar mi agenda</a>
     </section>
+    <section aria-labelledby="faq-title">
+      <div class="card-header">
+        <div><p class="eyebrow">Resolvemos tus dudas</p><h2 id="faq-title">Información clara antes de reservar</h2></div>
+      </div>
+      <div class="faq-grid">
+        <details><summary>¿Cómo confirmo mi cita?</summary><p>Al reservar verás la confirmación al instante y podrás abrir WhatsApp con el resumen listo para recepción.</p></details>
+        <details><summary>¿Puedo cambiar o cancelar?</summary><p>Sí. Desde la agenda puedes reprogramar o liberar tu cupo cuando lo necesites.</p></details>
+        <details><summary>¿Dónde están ubicados?</summary><p>Escríbenos por WhatsApp y el equipo te compartirá la sede, instrucciones de llegada y horarios.</p></details>
+        <details><summary>¿Mis datos están protegidos?</summary><p>Solicitamos únicamente los datos necesarios para gestionar la reserva y no mostramos información clínica en este portal.</p></details>
+      </div>
+    </section>
     <footer>*Estimación basada en 24 cupos de 30 minutos. ClinicaFlow no diagnostica ni almacena historia clínica.
+      <br><a href="/admin.html">Acceso para el equipo</a>
     </footer>
   </main>
+  <a class="whatsapp-float" href="https://wa.me/573136465700" target="_blank" rel="noopener noreferrer" aria-label="Escribir a recepción por WhatsApp">WhatsApp <span aria-hidden="true">↗</span></a>
   <dialog id="reschedule-dialog" class="dialog" aria-labelledby="reschedule-title" aria-modal="true">
     <form id="reschedule-form" class="dialog-content">
       <h2 id="reschedule-title">Reprogramar cita</h2>
@@ -1115,7 +1174,7 @@
   </dialog>
   <dialog id="cancel-dialog" class="dialog" aria-labelledby="cancel-title" aria-modal="true">
     <form id="cancel-form" class="dialog-content">
-      <h2 id="cancel-title">Cuidado</h2>
+      <h2 id="cancel-title">Alerta</h2>
       <p class="message">¿Cancelar esta cita? El cupo volverá a estar disponible.</p><input id="cancel-id"
         type="hidden">
       <p id="cancel-message" class="message" aria-live="polite"></p>

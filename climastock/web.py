@@ -9,6 +9,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from api.analysis import build_capacity_payload
+from api.admin import handle_get as handle_admin_get, handle_patch as handle_admin_patch
 from api.appointments import (cancel_appointment_payload, create_appointment_payload,
                               list_appointments_payload, reschedule_appointment_payload)
 from api.whatsapp_webhook import handler as WhatsAppWebhookHandler
@@ -34,12 +35,21 @@ class ClinicaFlowHandler(BaseHTTPRequestHandler):
         if route.path == "/api/whatsapp_webhook":
             WhatsAppWebhookHandler.do_GET(self)
             return
+        if route.path == "/api/admin":
+            handle_admin_get(self)
+            return
+        if route.path in {"/admin", "/admin.html"}:
+            self._send(HTTPStatus.OK, "text/html; charset=utf-8", _admin_html())
+            return
         self._send(HTTPStatus.NOT_FOUND, "text/plain; charset=utf-8", "Ruta no encontrada")
 
     def do_POST(self) -> None:
         route_path = urlparse(self.path).path
         if route_path == "/api/whatsapp_webhook":
             WhatsAppWebhookHandler.do_POST(self)
+            return
+        if route_path == "/api/admin":
+            handle_admin_patch(self)
             return
         if route_path != "/api/appointments":
             self._send(HTTPStatus.NOT_FOUND, "text/plain; charset=utf-8", "Ruta no encontrada")
@@ -143,3 +153,7 @@ def run_server(port: int = 8000) -> None:
 
 def _dashboard_html() -> str:
     return (Path(__file__).resolve().parent.parent / "index.html").read_text(encoding="utf-8")
+
+
+def _admin_html() -> str:
+    return (Path(__file__).resolve().parent.parent / "admin.html").read_text(encoding="utf-8")

@@ -1,5 +1,7 @@
 """Contracts for receiving and persisting WhatsApp Cloud API messages."""
 
+import hashlib
+import hmac
 import unittest
 
 from api.whatsapp_webhook import extract_incoming_messages, is_valid_signature, verify_webhook_request
@@ -24,7 +26,7 @@ class WhatsAppWebhookTests(unittest.TestCase):
 
     def test_validates_the_meta_signature_before_processing_a_message(self) -> None:
         body = b'{"object":"whatsapp_business_account"}'
-        valid_signature = "sha256=8a94cbe7160e146b3cc11f6ef7625e65e8f4c80b2ff30dc1a4cfc8856bbdf3b7"
+        valid_signature = "sha256=" + hmac.new(b"app-secret", body, hashlib.sha256).hexdigest()
 
         self.assertTrue(is_valid_signature(body, valid_signature, "app-secret"))
         self.assertFalse(is_valid_signature(body, "sha256=incorrecta", "app-secret"))

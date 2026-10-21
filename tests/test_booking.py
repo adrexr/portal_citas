@@ -84,8 +84,8 @@ class WhatsAppBookingFlowTests(unittest.TestCase):
         dashboard = Path("index.html").read_text(encoding="utf-8")
 
         self.assertIn("https://wa.me/", dashboard)
-        self.assertIn("13473689226", dashboard)
-        self.assertNotIn("573136465700", dashboard)
+        self.assertIn("573136465700", dashboard)
+        self.assertNotIn("13473689226", dashboard)
         self.assertIn("Abrir WhatsApp", dashboard)
         self.assertIn('target="_blank"', dashboard)
 

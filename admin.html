@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ClinicaFlow | Operaciones</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #16213f;
+      --muted: #66708a;
+      --line: #dfe4f2;
+      --canvas: #f5f7ff;
+      --surface: #fff;
+      --brand: #4654d8;
+      --mint: #13b8a6;
+      --danger: #c94258;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 15px/1.5 system-ui, sans-serif
+    }
+
+    button,
+    input,
+    select {
+      font: inherit
+    }
+
+    button {
+      min-height: 42px;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid #9fa8ff;
+      outline-offset: 2px
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: auto;
+      padding: 28px 0 52px
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px
+    }
+
+    .brand {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 850
+    }
+
+    .brand span {
+      color: var(--brand)
+    }
+
+    .eyebrow {
+      color: var(--brand);
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    .primary {
+      padding: 0 15px;
+      color: #fff;
+      background: var(--brand)
+    }
+
+    .secondary {
+      padding: 0 13px;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1px solid var(--line)
+    }
+
+    .login,
+    .panel {
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: 0 16px 45px #25356a12
+    }
+
+    .login {
+      max-width: 440px;
+      margin: 12vh auto
+    }
+
+    .login label,
+    .filters label {
+      display: grid;
+      gap: 6px;
+      font-size: .8rem;
+      font-weight: 750
+    }
+
+    .login input,
+    .filters input,
+    .filters select {
+      min-height: 42px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px
+    }
+
+    .login form {
+      display: grid;
+      gap: 16px
+    }
+
+    .feedback {
+      min-height: 24px;
+      margin: 12px 0 0;
+      color: var(--danger)
+    }
+
+    .hidden {
+      display: none !important
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 0 0 20px
+    }
+
+    .stat {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--surface)
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--brand);
+      font-size: 1.7rem
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px
+    }
+
+    .tab[aria-selected="true"] {
+      color: #fff;
+      background: var(--brand)
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 14px;
+      background: #f8f9ff
+    }
+
+    .filters label {
+      min-width: 150px
+    }
+
+    .list {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: auto
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 120px 1fr 170px 150px;
+      gap: 14px;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid var(--line)
+    }
+
+    .row:last-child {
+      border: 0
+    }
+
+    .row h3,
+    .row p {
+      margin: 0
+    }
+
+    .row p {
+      color: var(--muted);
+      font-size: .87rem
+    }
+
+    .badge {
+      display: inline-flex;
+      width: max-content;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #eaf9f6;
+      color: #087c6d;
+      font-size: .77rem;
+      font-weight: 800
+    }
+
+    .empty {
+      padding: 30px;
+      color: var(--muted);
+      text-align: center
+    }
+
+    .actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap
+    }
+
+    .actions button {
+      min-height: 34px;
+      padding: 0 9px;
+      font-size: .76rem
+    }
+
+    .updated {
+      color: #087c6d
+    }
+
+    @media(max-width:720px) {
+      .stats {
+        grid-template-columns: 1fr
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+        gap: 6px
+      }
+
+      .top {
+        align-items: flex-start;
+        flex-direction: column
+      }
+
+      .filters {
+        align-items: stretch
+      }
+
+      .filters label {
+        width: 100%
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <header class="top"><a class="brand" href="/"><span>✦</span> ClinicaFlow</a>
+      <div>
+        <div class="eyebrow">Acceso privado</div><strong>Centro de operaciones</strong>
+      </div>
+    </header>
+    <section id="login" class="login" aria-labelledby="login-title">
+      <p class="eyebrow">Equipo clínico</p>
+      <h1 id="login-title">Accede a la operación</h1>
+      <p class="muted">Consulta reservas y atiende los mensajes entrantes de WhatsApp.</p>
+      <form id="login-form"><label for="access-token">Token de administrador<input id="access-token" type="password"
+            autocomplete="current-password" required></label><button class="primary" type="submit">Entrar al
+          panel</button></form>
+      <p id="login-feedback" class="feedback" aria-live="polite"></p>
+    </section>
+    <section id="dashboard" class="hidden" aria-label="Panel de operaciones">
+      <div class="stats">
+        <article class="stat"><span class="muted">Mensajes nuevos</span><strong id="new-count">—</strong><span
+            class="muted">Pendientes de respuesta</span></article>
+        <article class="stat"><span class="muted">Citas del día</span><strong id="appointment-count">—</strong><span
+            class="muted">Agenda seleccionada</span></article>
+        <article class="stat"><span class="muted">Estado</span><strong>Activo</strong><span class="updated"
+            id="updated-at">Sincronizando…</span></article>
+      </div>
+      <div class="panel">
+        <div class="tabs" role="tablist" aria-label="Datos operativos"><button class="secondary tab" id="messages-tab"
+            role="tab" aria-selected="true" aria-controls="messages-panel">Mensajes</button><button
+            class="secondary tab" id="appointments-tab" role="tab" aria-selected="false"
+            aria-controls="appointments-panel">Citas</button></div>
+        <section id="messages-panel" role="tabpanel" aria-labelledby="messages-tab">
+          <div class="filters"><label for="message-status">Estado<select id="message-status">
+                <option value="">Todos</option>
+                <option value="nuevo">Nuevos</option>
+                <option value="respondido">Respondidos</option>
+                <option value="cita_creada">Cita creada</option>
+              </select></label><button id="refresh-messages" class="secondary" type="button">Actualizar
+              mensajes</button></div>
+          <div id="messages-list" class="list" aria-live="polite">
+            <p class="empty">Carga tus mensajes para comenzar.</p>
+          </div>
+        </section>
+        <section id="appointments-panel" class="hidden" role="tabpanel" aria-labelledby="appointments-tab">
+          <div class="filters"><label for="admin-date">Fecha<input id="admin-date" type="date"></label><button
+              id="refresh-appointments" class="secondary" type="button">Actualizar agenda</button></div>
+          <div id="appointments-list" class="list" aria-live="polite">
+            <p class="empty">Carga la agenda para comenzar.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script>
+    const login = document.querySelector('#login'), dashboard = document.querySelector('#dashboard'), loginForm = document.querySelector('#login-form'), tokenInput = document.querySelector('#access-token'), feedback = document.querySelector('#login-feedback'), messagesList = document.querySelector('#messages-list'), appointmentsList = document.querySelector('#appointments-list'), statusFilter = document.querySelector('#message-status'), dateInput = document.querySelector('#admin-date');
+    const today = new Date(); dateInput.value = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10); let token = '';
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+    async function request(path, options = {}) {
+      const localUrl = 'http://127.0.0.1:8000/admin.html';
+      if (window.location.protocol === 'file:') throw Error(`Abre el panel desde ${localUrl}, no como archivo.`);
+      let response;
+      try {
+        response = await fetch(path, { ...options, headers: { ...options.headers, Authorization: `Bearer ${token}` } });
+      } catch (_error) {
+        throw Error(`No se pudo conectar al servidor. Inicia main.py y abre ${localUrl}.`);
+      }
+      const payload = await response.json();
+      if (!response.ok) throw Error(payload.error || 'No fue posible cargar los datos.');
+      return payload.data;
+    }
+    function formatDate(value) { try { return new Intl.DateTimeFormat('es-CO', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)); } catch { return value; } }
+    function setUpdated() { document.querySelector('#updated-at').textContent = `Actualizado ${new Intl.DateTimeFormat('es-CO', { timeStyle: 'short' }).format(new Date())}`; }
+    async function loadMessages() { messagesList.innerHTML = '<p class="empty">Cargando mensajes…</p>'; try { const data = await request(`/api/admin?resource=messages&status=${encodeURIComponent(statusFilter.value)}`); document.querySelector('#new-count').textContent = statusFilter.value === 'nuevo' ? data.length : data.filter(item => item.status === 'nuevo').length; messagesList.innerHTML = data.length ? data.map(item => `<article class="row"><div><span class="badge">${escapeHtml(item.status)}</span><p>${formatDate(item.sent_at)}</p></div><div><h3>${escapeHtml(item.sender_phone)}</h3><p>${escapeHtml(item.message_text || `Mensaje de tipo: ${item.message_type}`)}</p></div><div><label class="muted" for="status-${escapeHtml(item.id)}">Cambiar estado</label><select id="status-${escapeHtml(item.id)}" data-status-id="${escapeHtml(item.id)}"><option value="nuevo" ${item.status === 'nuevo' ? 'selected' : ''}>Nuevo</option><option value="respondido" ${item.status === 'respondido' ? 'selected' : ''}>Respondido</option><option value="cita_creada" ${item.status === 'cita_creada' ? 'selected' : ''}>Cita creada</option></select></div><div class="actions"><button class="secondary" data-save-id="${escapeHtml(item.id)}" type="button">Guardar</button></div></article>`).join('') : '<p class="empty">No hay mensajes para este filtro.</p>'; setUpdated(); } catch (error) { messagesList.innerHTML = `<p class="empty">${escapeHtml(error.message)}</p>`; } }
+    async function loadAppointments() { appointmentsList.innerHTML = '<p class="empty">Cargando agenda…</p>'; try { const data = await request(`/api/admin?resource=appointments&date=${encodeURIComponent(dateInput.value)}`); document.querySelector('#appointment-count').textContent = data.length; appointmentsList.innerHTML = data.length ? data.map(item => `<article class="row"><div><span class="badge">${escapeHtml(item.status)}</span></div><div><h3>${escapeHtml(item.patient_name)}</h3><p>${escapeHtml(item.service)} · ${escapeHtml(item.professional)}</p></div><div><p>${formatDate(item.starts_at)}</p></div></article>`).join('') : '<p class="empty">No hay citas para esta fecha.</p>'; setUpdated(); } catch (error) { appointmentsList.innerHTML = `<p class="empty">${escapeHtml(error.message)}</p>`; } }
+    loginForm.addEventListener('submit', async event => { event.preventDefault(); token = tokenInput.value; feedback.textContent = ''; try { await loadMessages(); login.classList.add('hidden'); dashboard.classList.remove('hidden'); } catch (error) { feedback.textContent = error.message; } });
+    document.querySelector('#refresh-messages').addEventListener('click', loadMessages); document.querySelector('#refresh-appointments').addEventListener('click', loadAppointments); statusFilter.addEventListener('change', loadMessages); messagesList.addEventListener('click', async event => { const button = event.target.closest('[data-save-id]'); if (!button) return; const id = button.dataset.saveId, status = document.querySelector(`[data-status-id="${id}"]`).value; button.disabled = true; try { await request('/api/admin', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) }); await loadMessages(); } finally { button.disabled = false; } });
+    function showTab(tab) { const isMessages = tab === 'messages'; document.querySelector('#messages-panel').classList.toggle('hidden', !isMessages); document.querySelector('#appointments-panel').classList.toggle('hidden', isMessages); document.querySelector('#messages-tab').setAttribute('aria-selected', isMessages); document.querySelector('#appointments-tab').setAttribute('aria-selected', !isMessages); if (!isMessages) loadAppointments(); }
+    document.querySelector('#messages-tab').addEventListener('click', () => showTab('messages')); document.querySelector('#appointments-tab').addEventListener('click', () => showTab('appointments'));
+  </script>
+</body>
+
+</html>
